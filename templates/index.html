@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+</head>
+<body>
+    <h1>To Do List</h1>
+    <!-- This will display error if field is left blank or only spaces are entered -->
+    {% with messages = get_flashed_messages(with_categories=true)%}
+    {% if messages %}
+    {% for category,message in messages%}
+    <div style="color: red;">{{message}}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <!-- This flash message is for checking if task is already there in list or not -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category,message in messages%}
+    <div style="color: crimson;">{{message}}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <!-- This form will take input with name as task and this task will be added in the list made in python file -->
+    <form action="/" method="post">
+        <input type="text" name="task" id="task" placeholder="What you want to do?">
+        <input type="submit" value="Submit">
+    </form>
+    <!-- This Unordered List displays tasks entered in the list -->
+    <ul>
+        {% for task in tasks %}
+        <li>{{task}}</li><a href="/delete/{{task}}">Delete</a>
+        {% endfor %}
+    </ul>
+</body>
+</html>
