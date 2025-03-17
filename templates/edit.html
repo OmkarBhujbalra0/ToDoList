@@ -16,28 +16,30 @@
     {% endif %}
     {% endwith %}
     <!-- This form will take input with name as task and this task will be added in the list made in python file -->
-    <form action="/" method="post">
-        <input type="text" name="task" id="task" placeholder="What you want to do?">
+    <form action="/edit/{{id}}" method="post">
+        <input type="text" name="new_task" id="new_task" placeholder="What you want to edit?">
         <input type="submit" value="Submit">
-    <label for="priority">
-        <select name="priority" id="priority">
-            <option value="High">High</option>
-            <option value="Medium">Medium</option>
-            <option value="Low">Low</option>
-        </select>
-    </label>
-    <label for="completion">
-        <select name="completion" id="completion">
-            <option value="Complete">Complete</option>
-            <option value="Incomplete">Incomplete</option>
-        </select>
-    </label>
+        <label for="priority">
+            <select name="priority" id="priority">
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+        </label>
+        <label for="completion">
+            <select name="completion" id="completion">
+                <option value="Complete">Complete</option>
+                <option value="Incomplete">Incomplete</option>
+            </select>
+        </label>
     </form>
     <!-- This Unordered List displays tasks entered in the list -->
     <ul>
         {% for task in tasks %}
-        <li>{{task}}</li><a href="/delete/{{id }}">Delete</a><a href="/edit/{{id}}">Edit</a>
+        <li>{{task}}</li><a href="/delete/{{id}}">Delete</a>
         {% endfor %}
     </ul>
 </body>         
 </html>
+
+<!-- This Edit.html is connected to edit route in flask -->
