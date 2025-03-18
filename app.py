@@ -16,7 +16,7 @@ db = SQLAlchemy(app)
 class Task(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     task = db.Column(db.String(200),nullable=False)
-    date = db.Column(db.Datetime,default=datetime.utcnow)
+    date = db.Column(db.DateTime,default=datetime.utcnow)
     priority = db.Column(db.String,nullable=False,default="Medium")
     completion = db.Column(db.String,nullable=False,default="Incomplete")
 
@@ -36,13 +36,14 @@ def homepage():
         task = request.form.get("task").strip()
         priority = request.form.get("priority")
         completion = request.form.get("completion")
-        date = datetime.now().strftime('%d-%m-%Y')
+        date = datetime.now()
         if not task:
             flash("Please Enter Something",'error')
             return redirect('/')
-        task = Task(task=task,timestamp=date,priority=priority,completion=completion)
+        task = Task(task=task,date=date,priority=priority,completion=completion)
         db.session.add(task)
         db.session.commit()
+        print(task)
         # After each task is added ,page is redirected
         return redirect('/')
     Tasks = Task.query.all()
@@ -51,26 +52,32 @@ def homepage():
 @app.route('/delete/<int:id>')
 def delete(id):
     task = Task.query.get_or_404(id)
-    db.session.delete(id)
+    db.session.delete(task)
     db.session.commit()
     return redirect('/')
 
 @app.route('/edit/<int:id>',methods=['GET','POST'])
-def edit(task):
+def edit(id):
     # Check if task is present in db,if not it returns 404 Error
     task = Task.query.get_or_404(id)
+    Tasks = Task.query.all()
     # if task is present,take new input to replace old input(task)
     if request.method == 'POST':
         new_task = request.form.get("new_task")
+        new_priority = request.form.get("new_priority")
+        new_completion = request.form.get("new_completion")
         # Replaces old task with new task
-        Task.task = new_task
-        db.session.commit()
         if not new_task.strip():
             flash("Please Enter Something",'error')
-            # If there is any error then page will redirect back to same page
             return redirect(f'/edit/{id}')
+        task.task = new_task
+        task.priority = new_priority
+        task.completion = new_completion
+        db.session.commit()
+        flash("Task successfully Edited","success")
+            # If there is any error then page will redirect back to same page
         return redirect('/')
-    return render_template('edit.html',task=task)
+    return render_template('edit.html',task=task,tasks=Tasks)
     
 
 # Run the App
