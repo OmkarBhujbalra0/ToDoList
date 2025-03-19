@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To Do List</title>
 </head>
+
 <body>
     <h1>To Do List</h1>
     <!-- This will display error if field is left blank or only spaces are entered -->
@@ -16,45 +18,49 @@
     {% endif %}
     {% endwith %}
     <!-- This form will take input with name as task and this task will be added in the list made in python file -->
-    <form action="{{url_for('edit',id=task.id)}}" method="post">
-        <input type="text" name="new_task" id="new_task" placeholder="What you want to edit?" value={{task.task}}>
-        <input type="submit" value="Submit">
-        <label for="priority">
-            <select name="new_priority" id="new_priority">
-                <option value="High" {%if task.priority == "High" %}selected{% endif %}>High</option>
-                <option value="Medium" {% if task.priority == "Medium" %}selected{% endif %}>Medium</option>
-                <option value="Low" {% if task.priority == "Low" %}selected{% endif %}>Low</option>
-            </select>
-        </label>
-        <label for="completion">
-            <select name="new_completion" id="new_completion">
-                <option value="Complete" {% if task.completion == "Complete" %}selected{% endif %}>Complete</option>
-                <option value="Incomplete" {% if task.completion == "Incomplete" %}selected{% endif %}>Incomplete</option>
-            </select>
-        </label>
-    </form>
-    <!-- This Unordered List displays tasks entered in the list -->
-    <table border="black">
-        <tr>
-            <th>Id</th>
-            <th>Task</th>
-            <th>Date</th>
-            <th>Priority</th>
-            <th>Completion</th>
-            <th>Actions</th>
-        </tr>
+    <br>
+    {% if tasks %}
+        <!-- This Unordered List displays tasks entered in the list -->
+        <table border="black">
+            <tr>
+                <th>Id</th>
+                <th>Task</th>
+                <th>Date</th>
+                <th>Priority</th>
+                <th>Completion</th>
+                <th>Actions</th>
+                <th>Do you want to update?</th>
+            </tr>
             {% for task in tasks %}
             <tr>
-            <td>{{task.id}}</td>
-            <td>{{task.task}}</td>
-            <td>{% if task.date%}{{task.date.strftime('%d-%m-%Y %H-%M')}}{%else%}N/A{% endif %}</td>
-            <td>{{task.priority}}</td>
-            <td>{{task.completion}}</td>
-            <td><a href="{{url_for('delete',id=task.id)}}">Delete</a></td>
+                <form action="{{url_for('edit',id=task.id)}}" method="post">
+                <td>{{task.id}}</td>
+                <td><input type="text" name="new_task" id="new_task" placeholder="What you want to edit?" value="{{task.task}}"></td>
+                <td>{% if task.date%}{{task.date.strftime('%d-%m-%Y %H:%M')}}{%else%}N/A{% endif %}</td>
+                <td>
+                    <label for="new_priority">
+                        <select name="new_priority">
+                            <option value="High" {% if task.priority=="High" %}selected{% endif %}>High</option>
+                            <option value="Medium" {% if task.priority=="Medium" %}selected{% endif %}>Medium</option>
+                            <option value="Low" {% if task.priority=="Low" %}selected{% endif %}>Low</option>
+                        </select>
+                    </label>
+                </td>
+                <td>
+                    <label for="new_completion">
+                        <input type="checkbox" name="new_completion" value="Complete" {% if task.completion == "Complete"%}checked{%endif%}>
+                    </label>
+                </td>
+                <td><a href="{{url_for('delete',id=task.id)}}">Delete</a></td>
+                <td><input type="submit" value="Yes"></td>
+                </form>
             </tr>
             {% endfor %}
-    </table>
-</body>         
+        </table>
+    {% else %}
+    <h3>Add task to edit.</h3>
+    {% endif %}
+</body>
 </html>
 
 <!-- This Edit.html is connected to edit route in flask -->

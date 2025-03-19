@@ -18,24 +18,17 @@
     <!-- This form will take input with name as task and this task will be added in the list made in python file -->
     <form action="/" method="post">
         <input type="text" name="task" id="task" placeholder="What you want to do?">
-        <input type="submit" value="Submit">
-    <label for="priority">
         <select name="priority" id="priority">
             <option value="High">High</option>
             <option value="Medium">Medium</option>
             <option value="Low">Low</option>
         </select>
-    </label>
-    <label for="completion">
-        <select name="completion" id="completion">
-            <option value="Complete">Complete</option>
-            <option value="Incomplete">Incomplete</option>
-        </select>
-    </label>
+        <input type="submit" value="Submit">
     </form>
     <!-- This Table will display list of Tasks -->
+     <br>
      {% if tasks %}
-    <table border="black">
+    <table border="1" >
         <tr>
             <th>Id</th>
             <th>Task</th>
@@ -48,7 +41,7 @@
             <tr>
             <td>{{task.id}}</td>
             <td>{{task.task}}</td>
-            <td>{% if task.date%}{{task.date.strftime('%d-%m-%Y %H-%M')}}{%else%}N/A{% endif %}</td>
+            <td>{% if task.date%}{{task.date.strftime('%d-%m-%Y %H:%M')}}{%else%}N/A{% endif %}</td>
             <td>{{task.priority}}</td>
             <td>{{task.completion}}</td>
             <td><a href="{{url_for('delete',id=task.id)}}">Delete</a> | <a href="{{url_for('edit',id=task.id)}}">Edit</a></td>

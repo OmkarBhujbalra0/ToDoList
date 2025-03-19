@@ -35,12 +35,11 @@ def homepage():
         # Even If user enters only spaces in input field,strip() will remove the space and field will remain empty 
         task = request.form.get("task").strip()
         priority = request.form.get("priority")
-        completion = request.form.get("completion")
         date = datetime.now()
         if not task:
             flash("Please Enter Something",'error')
             return redirect('/')
-        task = Task(task=task,date=date,priority=priority,completion=completion)
+        task = Task(task=task,date=date,priority=priority)
         db.session.add(task)
         db.session.commit()
         print(task)
@@ -65,7 +64,7 @@ def edit(id):
     if request.method == 'POST':
         new_task = request.form.get("new_task")
         new_priority = request.form.get("new_priority")
-        new_completion = request.form.get("new_completion")
+        new_completion = "Complete" if "new_completion" in request.form else "Incomplete"
         # Replaces old task with new task
         if not new_task.strip():
             flash("Please Enter Something",'error')
