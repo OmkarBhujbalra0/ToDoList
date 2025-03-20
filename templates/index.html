@@ -1,55 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To Do List</title>
 </head>
+
 <body>
-    <h1>To Do List</h1>
+        <h1>To-Do List</h1>
+    </header>
     <!-- This will display error if field is left blank or only spaces are entered -->
     {% with messages = get_flashed_messages(with_categories=true)%}
     {% if messages %}
     {% for category,message in messages%}
-    <div style="color: red;">{{message}}</div>
+    <div>{{message}}</div>
     {% endfor %}
     {% endif %}
     {% endwith %}
     <!-- This form will take input with name as task and this task will be added in the list made in python file -->
-    <form action="/" method="post">
-        <input type="text" name="task" id="task" placeholder="What you want to do?">
-        <select name="priority" id="priority">
-            <option value="High">High</option>
-            <option value="Medium">Medium</option>
-            <option value="Low">Low</option>
-        </select>
-        <input type="submit" value="Submit">
-    </form>
+    <div>
+        <form action="/" method="post">
+            <input type="text" name="task" id="task" placeholder="What you want to do?">
+            <select name="priority">
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+            <button type="submit"> Add Task </button>
+        </form>
+        </div>
+        <div>
+        <form action="/" method="get">
+            <select name="priority_filter">
+                <option value="All">All</option>
+                <option value="High" {% if request.args.get("priority_filter") == "High" %}selected{% endif %}>High</option>
+                <option value="Medium" {% if request.args.get("priority_filter") == "Medium" %}selected{% endif %}>Medium</option>
+                <option value="Low" {% if request.args.get("priority_filter") == "Low" %}selected{% endif %}>Low</option>
+            </select>
+            <select name="completion_filter">
+                <option value="All">All</option>
+                <option value="Complete" {% if request.args.get("completion_filter") == "Complete" %}selected{% endif %}>Complete</option>
+                <option value="Incomplete" {% if request.args.get("completion_filter") == "Incomplete" %}selected{% endif %}>Incomplete</option>
+            </select>
+            <input type="submit" value="Filter">
+        </form>
+    </div>
     <!-- This Table will display list of Tasks -->
-     <br>
-     {% if tasks %}
-    <table border="1" >
-        <tr>
-            <th>Id</th>
-            <th>Task</th>
-            <th>Date</th>
-            <th>Priority</th>
-            <th>Completion</th>
-            <th>Actions</th>
-        </tr>
+    <br>
+    {% if tasks %}
+        <table border="1">
+            <tr>
+                <th>Id</th>
+                <th>Task</th>
+                <th>Date</th>
+                <th>Priority</th>
+                <th>Completion</th>
+                <th>Actions</th>
+            </tr>
             {% for task in tasks %}
             <tr>
-            <td>{{task.id}}</td>
-            <td>{{task.task}}</td>
-            <td>{% if task.date%}{{task.date.strftime('%d-%m-%Y %H:%M')}}{%else%}N/A{% endif %}</td>
-            <td>{{task.priority}}</td>
-            <td>{{task.completion}}</td>
-            <td><a href="{{url_for('delete',id=task.id)}}">Delete</a> | <a href="{{url_for('edit',id=task.id)}}">Edit</a></td>
+                <td>{{task.id}}</td>
+                <td>{{task.task}}</td>
+                <td>{% if task.date%}{{task.date.strftime('%d-%m-%Y %H:%M')}}{%else%}N/A{% endif %}</td>
+                <td>{{task.priority}}</td>
+                <td>{{task.completion}}</td>
+                <td><a href="{{url_for('delete',id=task.id)}}">Delete</a><a href="{{url_for('edit',id=task.id)}}">Edit</a></td>
             </tr>
             {% endfor %}
-    </table>
+        </table>
+    </div>
     {% else %}
     <h3>Add your First Task</h3>
     {% endif %}
-</body>         
+</body>
+
 </html>

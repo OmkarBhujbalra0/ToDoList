@@ -45,7 +45,16 @@ def homepage():
         print(task)
         # After each task is added ,page is redirected
         return redirect('/')
-    Tasks = Task.query.all()
+    Tasks = Task.query
+    # args.get filters data according to the argument
+    priority_filter = request.args.get("priority_filter","")
+    completion_filter = request.args.get("completion_filter","")
+    # if priority is not all then it prints data filtered according to the arg
+    if priority_filter and priority_filter!="All":
+        Tasks = Tasks.filter(Task.priority == priority_filter)
+    if completion_filter and completion_filter!="All":
+        Tasks = Tasks.filter(Task.completion == completion_filter)
+    Tasks = Tasks.all()
     return render_template('index.html',tasks=Tasks)
 
 @app.route('/delete/<int:id>')
@@ -59,7 +68,7 @@ def delete(id):
 def edit(id):
     # Check if task is present in db,if not it returns 404 Error
     task = Task.query.get_or_404(id)
-    Tasks = Task.query.all()
+    Tasks = Task.query
     # if task is present,take new input to replace old input(task)
     if request.method == 'POST':
         new_task = request.form.get("new_task")
@@ -76,6 +85,13 @@ def edit(id):
         flash("Task successfully Edited","success")
             # If there is any error then page will redirect back to same page
         return redirect('/')
+    priority_filter = request.args.get("priority_filter","")
+    completion_filter = request.args.get("completion_filter","")
+    if priority_filter and priority_filter!="All":
+        Tasks = Tasks.filter(Task.priority == priority_filter)
+    if completion_filter and completion_filter!="All":
+        Tasks = Tasks.filter(Task.completion == completion_filter)
+    Tasks = Tasks.all()
     return render_template('edit.html',task=task,tasks=Tasks)
     
 

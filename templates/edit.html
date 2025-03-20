@@ -9,6 +9,20 @@
 
 <body>
     <h1>To Do List</h1>
+    <form action="{{url_for('edit',id=task.id)}}" method="get">
+        <select name="priority_filter">
+            <option value="All">All</option>
+            <option value="High" {% if request.args.get("priority_filter") == "High" %}selected{% endif%}>High</option>
+            <option value="Medium" {% if request.args.get("priority_filter") == "Medium" %}selected{% endif%}>Medium</option>
+            <option value="Low" {% if request.args.get("priority_filter") == "Low" %}selected{% endif%}>Low</option>
+        </select>
+        <select name="completion_filter">
+            <option value="All">All</option>
+            <option value="Complete" {% if request.args.get("completion_filter") == "Complete" %}selected{% endif%}>Complete</option>
+            <option value="Incomplete" {% if request.args.get("completion_filter") == "Incomplete" %}selected{% endif%}>Incomplete</option>
+        </select>
+        <input type="submit" value="Filter">
+    </form>
     <!-- This will display error if field is left blank or only spaces are entered -->
     {% with messages = get_flashed_messages(with_categories=true)%}
     {% if messages %}
@@ -21,7 +35,7 @@
     <br>
     {% if tasks %}
         <!-- This Unordered List displays tasks entered in the list -->
-        <table border="black">
+        <table border="1">
             <tr>
                 <th>Id</th>
                 <th>Task</th>
@@ -35,7 +49,7 @@
             <tr>
                 <form action="{{url_for('edit',id=task.id)}}" method="post">
                 <td>{{task.id}}</td>
-                <td><input type="text" name="new_task" id="new_task" placeholder="What you want to edit?" value="{{task.task}}"></td>
+                <td><input type="text" name="new_task" id="new_task"  placeholder="What you want to edit?" value="{{task.task}}"></td>
                 <td>{% if task.date%}{{task.date.strftime('%d-%m-%Y %H:%M')}}{%else%}N/A{% endif %}</td>
                 <td>
                     <label for="new_priority">
@@ -47,9 +61,11 @@
                     </label>
                 </td>
                 <td>
+                <div>
                     <label for="new_completion">
                         <input type="checkbox" name="new_completion" value="Complete" {% if task.completion == "Complete"%}checked{%endif%}>
                     </label>
+                </div>
                 </td>
                 <td><a href="{{url_for('delete',id=task.id)}}">Delete</a></td>
                 <td><input type="submit" value="Yes"></td>
