@@ -1,5 +1,6 @@
 # Below Code imports packages/modules that are important for handling requests,redirecting to the page,rendering the HTML file
 from flask import Flask,render_template,request,redirect,flash
+from flask_migrate import Migrate
 from urllib.parse import unquote
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
@@ -12,6 +13,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///tasks.db"
 
 db = SQLAlchemy(app)
 
+migrate = Migrate(app,db)
 
 class Task(db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -19,6 +21,7 @@ class Task(db.Model):
     date = db.Column(db.DateTime,default=datetime.utcnow)
     priority = db.Column(db.String,nullable=False,default="Medium")
     completion = db.Column(db.String,nullable=False,default="Incomplete")
+    due_date = db.Column(db.DateTime,nullable=True)
 
 # Creates a DB if not created
 with app.app_context():
@@ -36,10 +39,19 @@ def homepage():
         task = request.form.get("task").strip()
         priority = request.form.get("priority")
         date = datetime.now()
+        due_date = request.form.get("due_date")
+        if due_date:
+            due_date = datetime.strptime(due_date,"%Y-%m-%dT%H:%M")
+            if due_date < datetime.utcnow():
+                flash("You are not Time Traveller! Don't set due date in past","danger")
+                return redirect("/")
+        else:
+            due_date =  None
+
         if not task:
             flash("Please Enter Something",'error')
             return redirect('/')
-        task = Task(task=task,date=date,priority=priority)
+        task = Task(task=task,date=date,priority=priority,due_date=due_date)
         db.session.add(task)
         db.session.commit()
         print(task)
