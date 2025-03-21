@@ -86,6 +86,14 @@ def edit(id):
         new_task = request.form.get("new_task")
         new_priority = request.form.get("new_priority")
         new_completion = "Complete" if "new_completion" in request.form else "Incomplete"
+        new_due_date = request.form.get("new_due_date")
+        if new_due_date:
+            new_due_date = datetime.strptime(new_due_date,"%Y-%m-%dT%H:%M")
+            if new_due_date < datetime.utcnow():
+                flash("You are not Time Traveller! Don't set due date in past","danger")
+                return redirect("/")
+        else:
+            new_due_date =  task.due_date
         # Replaces old task with new task
         if not new_task.strip():
             flash("Please Enter Something",'error')
@@ -93,6 +101,7 @@ def edit(id):
         task.task = new_task
         task.priority = new_priority
         task.completion = new_completion
+        task.due_date = new_due_date
         db.session.commit()
         flash("Task successfully Edited","success")
             # If there is any error then page will redirect back to same page

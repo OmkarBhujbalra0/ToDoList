@@ -43,6 +43,7 @@
                 <th>Priority</th>
                 <th>Completion</th>
                 <th>Actions</th>
+                <th>Due Date</th>
                 <th>Do you want to update?</th>
             </tr>
             {% for task in tasks %}
@@ -68,6 +69,7 @@
                 </div>
                 </td>
                 <td><a href="{{url_for('delete',id=task.id)}}">Delete</a></td>
+                <td><input type="datetime-local" name="new_due_date" value="{{task.due_date.strftime('%Y-%m-%dT%H:%M') if task.due_date else ''}}"></td>
                 <td><input type="submit" value="Yes"></td>
                 </form>
             </tr>
