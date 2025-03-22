@@ -2,7 +2,7 @@
 from flask import Flask,render_template,request,redirect,flash
 from flask_migrate import Migrate
 from urllib.parse import unquote
-from datetime import datetime
+from datetime import datetime,timedelta
 from flask_sqlalchemy import SQLAlchemy
 
 # Used Flask class to initialize the app
@@ -11,9 +11,12 @@ app = Flask(__name__)
 # This will configure Sqlite as db and creates tasks.db named database if it does not exist
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///tasks.db"
 
+
 db = SQLAlchemy(app)
 
 migrate = Migrate(app,db)
+
+from tasks import fivemin,alarm_task
 
 class Task(db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -54,7 +57,7 @@ def homepage():
         task = Task(task=task,date=date,priority=priority,due_date=due_date)
         db.session.add(task)
         db.session.commit()
-        print(task)
+        schedule_alarms(task.task,task.due_date)
         # After each task is added ,page is redirected
         return redirect('/')
     Tasks = Task.query
@@ -67,7 +70,18 @@ def homepage():
     if completion_filter and completion_filter!="All":
         Tasks = Tasks.filter(Task.completion == completion_filter)
     Tasks = Tasks.all()
+    # This is current time
     return render_template('index.html',tasks=Tasks)
+
+def schedule_alarms(task_name,due_date):
+        now = datetime.utcnow()
+        if due_date:
+            time_left = (due_date-now).total_seconds()
+
+            if time_left > 300:
+                fivemin.apply_async(args=[task_name],countdown=time_left-300)
+            if time_left > 0:
+                alarm_task.apply_async(args=[task_name],countdown=time_left)
 
 @app.route('/delete/<int:id>')
 def delete(id):
@@ -97,12 +111,13 @@ def edit(id):
         # Replaces old task with new task
         if not new_task.strip():
             flash("Please Enter Something",'error')
-            return redirect(f'/edit/{id}')
+            return redirect('/')
         task.task = new_task
         task.priority = new_priority
         task.completion = new_completion
         task.due_date = new_due_date
         db.session.commit()
+        schedule_alarms(task.task,task.due_date)
         flash("Task successfully Edited","success")
             # If there is any error then page will redirect back to same page
         return redirect('/')
