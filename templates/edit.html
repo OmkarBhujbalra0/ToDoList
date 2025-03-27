@@ -5,10 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To Do List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body>
-    <h1>To Do List</h1>
+    <div class="bg-blue-500 text-white py-4 text-center shadow-md">
+    <h1 class="text-3xl font-bold">To Do List</h1>
+    </div>
     <form action="{{url_for('edit',id=task.id)}}" method="get">
         <select name="priority_filter">
             <option value="All">All</option>
@@ -27,7 +30,7 @@
     {% with messages = get_flashed_messages(with_categories=true)%}
     {% if messages %}
     {% for category,message in messages%}
-    <div style="color: red;">{{message}}</div>
+    <div class=" {%if category == 'success' %} bg-green-500 {% elif category == 'error' %} bg-red-500 {% elif category == 'warning'%} bg-yellow-500 {% else %} bg-blue-500 {% endif %} text-white text-center py-3 px-4 rounded-lg shadow-md my-2 max-w-lg mx-auto  mt-4">{{message}}</div>
     {% endfor %}
     {% endif %}
     {% endwith %}
