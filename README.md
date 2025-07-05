@@ -1,5 +1,22 @@
-# ToDoList
+#**EachDay** -- *An Habit Tracker / To-Do List*
 
-This is To Do List Project implemented using Flask,HTML and Python.
-Uses SQLite as Database to store.
-As this project proceeds,more technologies will be used
+###Welcome to EachDay,where you can add the task,complete the task and build a habit.
+Sign up for for making your **EachDay** count.
+
+[image]
+
+#### Features
+- Email Notifications and Alerts to remind you about your task
+- Streak System to gamify your lifestyle
+- Track your progress using Charts
+
+[image]
+
+#### tech Stack
+- Python 3
+- Flask
+- SQLite
+- BootStrap
+- ReportLab
+
+ 
